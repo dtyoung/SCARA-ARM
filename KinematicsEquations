@@ -1,0 +1,30 @@
+Direct Kinematics:
+  DK1: x and y positions of joints
+    xj1 = xm1 + Rcos(theta1)
+    yj1 = ym1 + Rsin(theta1)
+    xj2 = xm2 + Rcos(theta2)
+    yj2 = ym1 + Rsin(theta2)
+  
+  DK2: Midpoint between joints 1 and 2
+    xA = xj1 + 0.5(xj2 - xj1)
+    yA = yj1 + 0.5(yj2 - yj1)
+    
+  DK3: Expression for h in terms of R and the distance between j1 and j2
+    d = 
+    h = 
+  
+  DK4: x and y coordinates for T1 and T2
+    xt1 = xa + hcos(PI/2 - alpha)
+    yt1 = ya + hsin(PI/2 - alpha)
+    xt2 = xa - hcos(PI/2 - alpha)
+    yt2 = ya - hsin(PI/2 - alpha)
+    
+Inverse Kinematics
+  IK 1: x and y positions of joints j21 and j22
+    xj21 = tx + rcos(PI - theta21)
+    yj21 = ty + rsin(PI - theta21)
+    xj22 = tx - rcos(theta22)
+    yj22 = ty - rsin(theta22)
+    
+    theta21 = atan2(y21 - ym2, xj21 - xm2)
+    theta 22 = atan2(yj22 - ym2, xj22 - xm2)
