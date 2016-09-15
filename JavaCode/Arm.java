@@ -19,6 +19,7 @@ public class Arm
     private int xm2;
     private int ym2;
     private double r;  // length of the upper/fore arm
+    
     // parameters of servo motors - linear function pwm(angle)
     // each of two motors has unique function which should be measured
     // linear function cam be described by two points
@@ -53,11 +54,11 @@ public class Arm
      */
     public Arm()
     {
-        xm1 = 290; // set motor coordinates
-        ym1 = 372;
-        xm2 = 379;
+        xm1 = 287; // set motor coordinates
+        ym1 = 374;
+        xm2 = 377;
         ym2 = 374;
-        r = 156.0;
+        r = 154.0;
         theta1 = -90.0*Math.PI/180.0; // initial angles of the upper arms
         theta2 = -90.0*Math.PI/180.0;
         valid_state = false;
@@ -99,7 +100,7 @@ public class Arm
         UI.setColor(Color.GRAY);
         UI.drawRect(0,0,640,480);
 
-        // it can b euncommented later when
+        // it can be uncommented later when
         // kinematic equations are derived
         if ( valid_state) {
             // draw upper arms
@@ -142,30 +143,31 @@ public class Arm
     }
 
     // motor angles from tool position
-    // updetes variables of the class
+    // updates variables of the class
     public void inverseKinematic(double xt_new,double yt_new){
 
         valid_state = true;
         xt = xt_new;
         yt = yt_new;
         valid_state = true;
+        // distance between pen and motor1        
         double dx1 = xt - xm1; 
         double dy1 = yt - ym1;
-        // distance between pem and motor
-        double d1 = Math.sqrt(dx1*dx1 - dy1*dy1);
+        double d1 = Math.sqrt(dx1*dx1 + dy1*dy1);
+        
         if (d1>2*r){
             //UI.println("Arm 1 - can not reach");
             valid_state = false;
             return;
         }
 
-        double l1 = d1/2;
-        double h1 = Math.sqrt(r*r - d1*d1/4);
+        double l1 = d1/2; //Half the distance between the joints
+        double h1 = Math.sqrt(r*r - d1*d1/4); 
         // elbows positions
-        xj1 = ;
-        yj1 = ;
+        //xj1 = ;
+        //yj1 = ;
 
-        theta1 = ;
+        //theta1 = ;
         if ((theta1>0)||(theta1<-Math.PI)){
             valid_state = false;
             //UI.println("Ange 1 -invalid");
@@ -173,9 +175,10 @@ public class Arm
         }
 
         // theta12 = atan2(yj12 - ym1,xj12-xm1);
-        double dx2 = xt - xm2; 
+        // distance between pen and motor 2
+        double dx2 = xt - xm2;
         double dy2 = yt - ym2;
-        //double d2 = ...;
+        double d2 = Math.sqrt(dx2*dx2 + dy2*dy2);
         if (d2>2*r){
             // UI.println("Arm 2 - can not reach");
             valid_state = false;
