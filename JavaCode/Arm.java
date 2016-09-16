@@ -65,7 +65,7 @@ public class Arm
     }
 
     // draws arm on the canvas
-    public void draw()
+    public void draw() //Completed already no need to edit
     {
         // draw arm
         int height = UI.getCanvasHeight();
@@ -124,7 +124,7 @@ public class Arm
         // midpoint between joints
         double  xa = xj1 + 0.5*(xj2-xj1);
         double  ya = yj1 + 0.5*(yj2-yj1) ;
-        // distance between joints
+        // half distance between joints
         double d = 0.5*Math.sqrt((xj2-xj1)*(xj2-xj1) + (yj2-yj1)*(yj2-yj1));
         if (d<2*r){
             valid_state = true;
@@ -150,24 +150,25 @@ public class Arm
         xt = xt_new;
         yt = yt_new;
         valid_state = true;
+        
         // distance between pen and motor1        
         double dx1 = xt - xm1; 
         double dy1 = yt - ym1;
         double d1 = Math.sqrt(dx1*dx1 + dy1*dy1);
         
-        if (d1>2*r){
+        if (d1>2*r){ //If the distance between the pen and the motor is greater than the possible length of the 2 arms
             //UI.println("Arm 1 - can not reach");
             valid_state = false;
             return;
         }
 
-        double l1 = d1/2; //Half the distance between the joints
+        double l1 = d1/2; //Half the distance between the pen and motor
         double h1 = Math.sqrt(r*r - d1*d1/4); 
-        // elbows positions
+        // elbows positions, elbows facing out
         //xj1 = ;
         //yj1 = ;
 
-        //theta1 = ;
+        //theta1 = ; //angle of motor 1
         if ((theta1>0)||(theta1<-Math.PI)){
             valid_state = false;
             //UI.println("Ange 1 -invalid");
