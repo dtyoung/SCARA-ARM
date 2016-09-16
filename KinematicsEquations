@@ -10,8 +10,8 @@ Direct Kinematics:
     yA = yj1 + 0.5(yj2 - yj1)
     
   DK3: Expression for h in terms of R and the distance between j1 and j2
-    d = 
-    h = 
+	d = sqrt(Math.pow(xj2 - xj1, 2) + Math.pow(yj2 - yj2, 2))
+    h = sqrt(r*r - .5*d*d)
   
   DK4: x and y coordinates for T1 and T2
     xt1 = xa + hcos(PI/2 - alpha)
@@ -23,8 +23,8 @@ Inverse Kinematics
   IK 1: x and y positions of joints j21 and j22
     xj21 = tx + rcos(PI - theta21)
     yj21 = ty + rsin(PI - theta21)
-    xj22 = tx - rcos(theta22)
-    yj22 = ty - rsin(theta22)
+    xj22 = tx + rcos(PI - theta22)
+    yj22 = ty + rsin(PI - theta22)
     
     theta21 = atan2(y21 - ym2, xj21 - xm2)
     theta 22 = atan2(yj22 - ym2, xj22 - xm2)
