@@ -165,17 +165,19 @@ public class Arm
         double l1 = d1/2; //Half the distance between the pen and motor
         double h1 = Math.sqrt(r*r - d1*d1/4); 
         // elbows positions, elbows facing out
-        //xj1 = ;
-        //yj1 = ;
+       
+        theta1 = acos(xt-xm1, h1); //angle of motor 1
+        xj1 = xm1 + l1*cos(theta1) +  h1*cos(theta1+Math.PI/2.0);
+        yj1 = ym1 + l1*sin(theta1) +  h1*sin(theta1+Math.PI/2.0);;
 
-        //theta1 = ; //angle of motor 1
+        
         if ((theta1>0)||(theta1<-Math.PI)){
             valid_state = false;
             //UI.println("Ange 1 -invalid");
             return;
         }
 
-        // theta12 = atan2(yj12 - ym1,xj12-xm1);
+         theta12 = atan2(yj12 - ym1,xj12-xm1);
         // distance between pen and motor 2
         double dx2 = xt - xm2;
         double dy2 = yt - ym2;
@@ -189,9 +191,12 @@ public class Arm
         double l2 = d2/2;
 
         double h2 = Math.sqrt(r*r - d2*d2/4);
+        
+        theta2 = asin(d2,yt-my2)
+        
         // elbows positions
-        //         xj2 = ...;
-        //         yj2 = ...;
+        xj2 = xt - 0.5*(mx2-xt) + h2cos(Math.PI/2.0 - theta2);
+        yj2 = ...;
         // motor angles for both 1st elbow positions
         //         theta2 = ...;
         if ((theta2>0)||(theta2<-Math.PI)){
