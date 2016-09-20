@@ -1,0 +1,2 @@
+scp [filename] [username]@[ipaddress]:[directory]
+scp test.txt pi@10.140.85.46:/home/pi/Destop
