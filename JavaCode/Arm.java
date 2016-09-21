@@ -19,7 +19,7 @@ public class Arm
     private int xm2;
     private int ym2;
     private double r;  // length of the upper/fore arm
-    
+
     // parameters of servo motors - linear function pwm(angle)
     // each of two motors has unique function which should be measured
     // linear function cam be described by two points
@@ -150,12 +150,12 @@ public class Arm
         xt = xt_new;
         yt = yt_new;
         valid_state = true;
-        
+
         // distance between pen and motor1        
         double dx1 = xt - xm1; 
         double dy1 = yt - ym1;
         double d1 = Math.sqrt(dx1*dx1 + dy1*dy1);
-        
+
         if (d1>2*r){ //If the distance between the pen and the motor is greater than the possible length of the 2 arms
             //UI.println("Arm 1 - can not reach");
             valid_state = false;
@@ -163,27 +163,29 @@ public class Arm
         }
 
         double l1 = d1/2; //Half the distance between the pen and motor
-        double h1 = Math.sqrt(r*r - d1*d1/4); 
+        double h1 = Math.sqrt(r*r - l1*l1); 
         // elbows positions, elbows facing out
-       
-        theta1 = acos(xt-xm1, h1); //angle of motor 1
-        xj1 = xm1 + l1*cos(theta1) +  h1*cos(theta1+Math.PI/2.0);
-        yj1 = ym1 + l1*sin(theta1) +  h1*sin(theta1+Math.PI/2.0);;
 
-        
+        double thetaA = Math.atan2(yt-ym1, xt-xm1);
+        xj1 = xm1 + (xt-xm1)/2 -  h1*Math.cos((Math.PI/2.0)+thetaA);
+        yj1 = ym1 + (yt-ym1)/2 - h1*Math.sin((Math.PI/2.0) + thetaA);
+
+        theta1 = Math.atan2(yj1-ym1, xj1-xm1); //angle of motor 1
+
+       
         if ((theta1>0)||(theta1<-Math.PI)){
             valid_state = false;
-            //UI.println("Ange 1 -invalid");
-            return;
+            UI.println("Ange 1 -invalid");
+             return;
         }
 
-         theta12 = atan2(yj12 - ym1,xj12-xm1);
+        theta2 = Math.atan2(yj2 - ym1,xj2-xm1);
         // distance between pen and motor 2
         double dx2 = xt - xm2;
         double dy2 = yt - ym2;
         double d2 = Math.sqrt(dx2*dx2 + dy2*dy2);
         if (d2>2*r){
-            // UI.println("Arm 2 - can not reach");
+            UI.println("Arm 2 - can not reach");
             valid_state = false;
             return;
         }
@@ -191,22 +193,23 @@ public class Arm
         double l2 = d2/2;
 
         double h2 = Math.sqrt(r*r - d2*d2/4);
-        
-        theta2 = asin(d2,yt-my2)
-        
+
+        //double thetaA = Math.asin(d2/(yt-ym2));
+        double thetaB = Math.atan2(yt-ym2, xt-xm2);
         // elbows positions
-        xj2 = xt - 0.5*(mx2-xt) + h2cos(Math.PI/2.0 - theta2);
-        yj2 = ...;
+
+        xj2 = xm2 + 0.5*(xt - xm2) - h2*Math.cos(thetaB - Math.PI/2.0 );
+        yj2 = ym2 + 0.5*(yt - ym2) - h2*Math.sin(thetaB - Math.PI/2.0 );
         // motor angles for both 1st elbow positions
-        //         theta2 = ...;
+        theta2 =  Math.atan2((yj2-ym2), (xj2-xm2));
         if ((theta2>0)||(theta2<-Math.PI)){
             valid_state = false;
-            //UI.println("Ange 2 -invalid");
+            UI.println("Ange 2 -invalid");
             return;
         }
 
-        //UI.printf("xt:%3.1f, yt:%3.1f\n",xt,yt);
-        //UI.printf("theta1:%3.1f, theta2:%3.1f\n",theta1*180/Math.PI,theta2*180/Math.PI);
+        UI.printf("xt:%3.1f, yt:%3.1f\n",xt,yt);
+        UI.printf("theta1:%3.1f, theta2:%3.1f\n",theta1*180/Math.PI,theta2*180/Math.PI);
         return;
     }
 
@@ -224,7 +227,7 @@ public class Arm
         theta2 = t2;
     }
 
-    // returns motor control signal
+    // returns motor control signals
     // for motor to be in position(angle) theta1
     // linear intepolation
     public int get_pwm1(){
