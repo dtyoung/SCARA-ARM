@@ -9,6 +9,7 @@
 import ecs100.UI;
 import java.awt.Color;
 import java.util.*;
+import java.io.*;
 
 public class Arm
 {
@@ -49,6 +50,20 @@ public class Arm
     private double yt;
     private boolean valid_state; // is state of the arm physically possible?
 
+    //Used for calibration
+    List<Integer> motor1Pwm = new ArrayList<Integer>();
+    List<Integer> motor1Angle = new ArrayList<Integer>();
+    List<Integer> motor2Pwm = new ArrayList<Integer>();
+    List<Integer> motor2Angle = new ArrayList<Integer>();
+    
+    //Equation in the form y = mx + b (angle = m*pwm + b)
+    double m1Slope; //Slope of the line of best fit for motor 1
+    double m1B; //Y intercept
+    
+    double m2Slope;//Slope of the line of best fit for motor 2
+    double m2B;//y intercept
+    //End of Calibration variables
+    
     /**
      * Constructor for objects of class Arm
      */
@@ -231,14 +246,114 @@ public class Arm
     // for motor to be in position(angle) theta1
     // linear intepolation
     public int get_pwm1(){
-        int pwm = 0;
+        int pwm = (int)((theta1 - m1B)/m1Slope);
         return pwm;
     }
     // ditto for motor 2
     public int get_pwm2(){
-        int pwm =0;
-        //pwm = (int)(pwm2_90 + (theta2 - 90)*pwm2_slope);
+        int pwm =(int)((theta2 - m2B)/m2Slope);
+        //pwm = (int)(pwm2_90 + (theta2 - 90)*pwm2_slope); Was here previously
         return pwm;
     }
-
+    
+    //Calibration Methods
+    
+    //Takes a file with a paste from the calibration display on the PI.
+    //Must include both ***Motor1 headers
+    //Adds each angle and pwm into the appropriate lists
+    public void initializeLists(String fname){
+        String line;
+        String token;
+        int index; //Index of '='
+        int index2; //Index of '.'
+        boolean motor1 = true;
+        try{
+            Scanner scan = new Scanner(new File(fname));
+            scan.nextLine();
+            while(scan.hasNextLine()){
+                token = scan.next();
+                if(token.contains("***")){
+                    motor1 = false;
+                    scan.nextLine();
+                }
+                else{
+                    if(motor1){
+                        index = token.indexOf("=");
+                        motor1Pwm.add(Integer.parseInt(token.substring(index + 1)));
+                        scan.next();scan.next();
+                        token = scan.next();
+                        index = token.indexOf("=");
+                        index2 = token.indexOf(".");
+                        motor1Angle.add(Integer.parseInt(token.substring(index + 1, index2)));
+                        scan.next();
+                    }
+                    else{
+                        token = scan.next();
+                        index = token.indexOf("=");
+                        motor2Pwm.add(Integer.parseInt(token.substring(index + 1)));
+                        scan.next();scan.next();
+                        token = scan.next();
+                        index = token.indexOf("=");
+                        index2 = token.indexOf(".");
+                        motor2Angle.add(Integer.parseInt(token.substring(index + 1, index2)));
+                    }
+                }
+            }
+        }
+        catch(Exception e){UI.println(e);}
+    }
+    
+    public void m1Fit(){
+        double meanPwm = 0;
+        double meanAngle = 0;
+        for(int counter = 0; counter < motor1Pwm.size(); counter++){
+            meanPwm += motor1Pwm.get(counter);
+        }
+        meanPwm /= motor1Pwm.size();
+        UI.println("MEAN PWM: " + meanPwm);
+        
+        for(int counter = 0; counter < motor1Angle.size(); counter++){
+            meanAngle += motor1Angle.get(counter);
+        }
+        meanAngle /= motor1Angle.size();
+        UI.println("MEAN angle: " + meanAngle);
+        
+        double total = 0;
+        int div = 0;
+        for(int counter = 0; counter < motor1Angle.size(); counter++){
+            total += (motor1Pwm.get(counter) - meanPwm)*(motor1Angle.get(counter) - meanAngle);
+            div += Math.pow((motor1Pwm.get(counter) - meanPwm),2);
+        }
+        
+        m1Slope = total/div;
+        m1B = meanAngle - (m1Slope*meanPwm);
+        UI.println("Equation: y = " + m1Slope + "x + " + m1B);
+    }
+    
+    public void m2Fit(){
+        double meanPwm = 0;
+        double meanAngle = 0;
+        for(int counter = 0; counter < motor2Pwm.size(); counter++){
+            meanPwm += motor2Pwm.get(counter);
+        }
+        meanPwm /= motor2Pwm.size();
+        UI.println("MEAN PWM: " + meanPwm);
+        
+        for(int counter = 0; counter < motor2Angle.size(); counter++){
+            meanAngle += motor2Angle.get(counter);
+        }
+        meanAngle /= motor2Angle.size();
+        UI.println("MEAN angle: " + meanAngle);
+        
+        double total = 0;
+        int div = 0;
+        for(int counter = 0; counter < motor2Angle.size(); counter++){
+            total += (motor2Pwm.get(counter) - meanPwm)*(motor2Angle.get(counter) - meanAngle);
+            div += Math.pow((motor2Pwm.get(counter) - meanPwm),2);
+        }
+        
+        m2Slope = total/div;
+        m2B = meanAngle - (m2Slope*meanPwm);
+        UI.println("Equation: y = " + m2Slope + "x + " + m2B);
+    }
 }
