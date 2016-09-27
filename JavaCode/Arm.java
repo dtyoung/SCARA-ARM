@@ -173,7 +173,7 @@ public class Arm
         double d1 = Math.sqrt(dx1*dx1 + dy1*dy1);
 
         if (d1>2*r){ //If the distance between the pen and the motor is greater than the possible length of the 2 arms
-            //UI.println("Arm 1 - can not reach");
+            UI.println("Arm 1 - can not reach");
             valid_state = false;
             return;
         }
@@ -216,6 +216,14 @@ public class Arm
 
         xj2 = xm2 + 0.5*(xt - xm2) - h2*Math.cos(thetaB - Math.PI/2.0 );
         yj2 = ym2 + 0.5*(yt - ym2) - h2*Math.sin(thetaB - Math.PI/2.0 );
+        
+        double dj = Math.sqrt((xj2 - xj1)*(xj2 - xj1) + (yj2 - yj1)*(yj2 - yj1));
+        if(dj > 2*r){
+            valid _state = false;
+            UI.println("Joints too far apart!");
+            return;
+        }
+        
         // motor angles for both 1st elbow positions
         theta2 =  Math.atan2((yj2-ym2), (xj2-xm2));
         if ((theta2>0)||(theta2<-Math.PI)){
