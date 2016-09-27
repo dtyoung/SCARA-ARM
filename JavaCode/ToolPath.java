@@ -36,7 +36,8 @@ public class ToolPath
     ArrayList<Integer> pwm1_vector; //The pwm value for each angle in theta1_vector
     ArrayList<Integer> pwm2_vector; //The pwm value for each angle in theta2_vector
     ArrayList<Integer> pwm3_vector; //The pwm value for each 1 or 0 in pen_vector
-
+    
+    String calibFile;
     /**
      * Constructor for objects of class ToolPath
      */
@@ -50,11 +51,10 @@ public class ToolPath
         pwm1_vector = new ArrayList<Integer>();
         pwm2_vector = new ArrayList<Integer>();
         pwm3_vector = new ArrayList<Integer>();
-
     }
 
     /**********CONVERT (X,Y) PATH into angles******************/
-    public void convert_drawing_to_angles(Drawing drawing,Arm arm,String fname){
+    public void convert_drawing_to_angles(Drawing drawing,Arm arm){
 
         // for all points of the drawing...        
         for (int i = 0;i < drawing.get_drawing_size()-1;i++){ 
@@ -116,7 +116,7 @@ public class ToolPath
     // save file with motor control values
     public void save_pwm_file(String fname){
         for ( int i = 0 ; i < theta1_vector.size(); i++){
-            UI.printf(" t1=%4f t2=%4f pen=%d\n",
+            UI.printf(" t1=%4d t2=%4d pen=%d\n",
                 pwm1_vector.get(i),pwm2_vector.get(i),pen_vector.get(i));
         }
         
@@ -128,7 +128,7 @@ public class ToolPath
             Writer w = new BufferedWriter(osw);
             String str_out;
             for (int i = 1; i < theta1_vector.size() ; i++){
-                str_out = String.format("%4f,%4f,%d\n",
+                str_out = String.format("%4d,%4d,%d\n",
                     pwm1_vector.get(i),pwm2_vector.get(i),pen_vector.get(i));
                 w.write(str_out);
             }

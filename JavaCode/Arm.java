@@ -7,6 +7,7 @@
  */
 
 import ecs100.UI;
+import ecs100.UIFileChooser;
 import java.awt.Color;
 import java.util.*;
 import java.io.*;
@@ -258,6 +259,15 @@ public class Arm
     
     //Calibration Methods
     
+    //Calibrates the arm
+    //Sets the values of motor1Slope, m1B, motor2Slope, m2B
+    public void calibrate(){
+        String calibrateFile = UIFileChooser.open("Select Calibration File");
+        initializeLists(calibrateFile);
+        m1Fit();
+        m2Fit();
+    }
+    
     //Takes a file with a paste from the calibration display on the PI.
     //Must include both ***Motor1 headers
     //Adds each angle and pwm into the appropriate lists
@@ -300,7 +310,7 @@ public class Arm
                 }
             }
         }
-        catch(Exception e){UI.println(e);}
+        catch(Exception e){UI.println("Invalid File: " + e);}
     }
     
     public void m1Fit(){

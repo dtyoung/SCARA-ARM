@@ -35,7 +35,9 @@ public class Main{
         UI.addButton("Load path XY", this::load_xy);
         UI.addButton("Save path Ang", this::save_ang);
         UI.addButton("Load path Ang:Play", this::load_ang);
-                
+        UI.addButton("Calibrate Arm", this::calibrateArm);
+        UI.addButton("Convert Ang to PWM", this::save_pwm);
+        
        // UI.addButton("Quit", UI::quit);
         UI.setMouseMotionListener(this::doMouse);
         UI.setKeyListener(this::doKeys);
@@ -45,6 +47,7 @@ public class Main{
         
         this.arm = new Arm();
         this.drawing = new Drawing();
+        this.tool_path = new ToolPath();
         this.run();
         arm.draw();
     }
@@ -148,14 +151,29 @@ public class Main{
     
     // save angles into the file
     public void save_ang(){
-        String fname = UIFileChooser.open();
-        tool_path.convert_drawing_to_angles(drawing,arm,fname);
+        String fname = UIFileChooser.open(); //Chooses location to save pwm file
+        tool_path.convert_drawing_to_angles(drawing,arm); 
+        tool_path.save_angles(fname);
     }
     
     
     public void load_ang(){
         
     }
+    
+    //Saves PWM values to a file.
+    //Need to have calibrated the arm first.
+    public void save_pwm(){
+        String fname = UIFileChooser.save(); //Chooses location to save pwm file
+        tool_path.convert_drawing_to_angles(drawing, arm);
+        tool_path.convert_angles_to_pwm(arm); //Calculates all pwm values from angle
+        tool_path.save_pwm_file(fname);//Saves the file of pwm values
+    }
+    
+    public void calibrateArm(){
+        arm.calibrate();
+    }
+    
     
     public void run() {
         while(true) {
