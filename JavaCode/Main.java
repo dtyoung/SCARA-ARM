@@ -37,7 +37,7 @@ public class Main{
         UI.addButton("Load path Ang:Play", this::load_ang);
         UI.addButton("Calibrate Arm", this::calibrateArm);
         UI.addButton("Convert Ang to PWM", this::save_pwm);
-        
+        UI.addButton("Circle", this::circle);
        // UI.addButton("Quit", UI::quit);
         UI.setMouseMotionListener(this::doMouse);
         UI.setKeyListener(this::doKeys);
@@ -124,6 +124,21 @@ public class Main{
         
     }
    
+    
+    public void circle(){
+        int radius = 37;
+        int x , y = 0;
+        for(int i = 0; i < 381; i+=3){
+            x = (int)(340 + radius*Math.cos(Math.toRadians(i)));
+            y = (int)(180 + radius*0.9*Math.sin(Math.toRadians(i)));
+            drawing.add_point_to_path(x,y, true);
+            arm.inverseKinematic(x,y);
+            arm.draw();
+            drawing.draw();
+            drawing.print_path();
+            state = 2;
+        }
+    }
     
     public void save_xy(){
         state = 0;

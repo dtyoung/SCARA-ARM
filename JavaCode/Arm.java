@@ -219,7 +219,7 @@ public class Arm
         
         double dj = Math.sqrt((xj2 - xj1)*(xj2 - xj1) + (yj2 - yj1)*(yj2 - yj1));
         if(dj > 2*r){
-            valid _state = false;
+            valid_state = false;
             UI.println("Joints too far apart!");
             return;
         }
